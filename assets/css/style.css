@@ -1,0 +1,86 @@
+body { background: #f2f4f8; overflow-x: hidden; }
+h3{
+  margin: 0px;
+}
+.navbar{
+  border-radius: 0px;
+}
+.navbar-brand{
+  padding-top: 5px;
+}
+.brand-text{
+  color: #FFFFFF;
+  white-space: nowrap;
+  margin-top: 15px;
+}
+.category-header{
+  margin-bottom: 20px;
+}
+.list-group-item{
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.list-group{
+  margin-top: 10px;
+}
+.menu-wrapper{
+  margin-top: 47px;
+}
+.panel{
+  padding-bottom: 20px;
+}
+#name-group{
+  margin-right: 40px;
+}
+#btn-del-cat{
+  float: right;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+#btn-add-food{
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.food-header{
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-right: 50px;
+}
+.table{
+  width: 98%;
+  margin: auto;
+}
+.food-name{
+  width: 25%;
+}
+.food-price{
+  width: 10%;
+}
+.food-edit{
+  width: 5%;
+}
+tbody > tr > td{
+  font-size: .9em;
+}
+.food-edit > a{
+  cursor: pointer;
+}
+#btn-del-menu{
+  margin-left: 20px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.confirm-cat-show{
+  margin-left: 10px;
+}
+.confirm-cat-show .btn{
+  padding: 0px 3px 0px 3px;
+  font-size: .8em;
+  border-radius: 1px;
+}
+.big-preload{
+  height: 100%;
+  margin-top: 25%;
+  left: 50%;
+  position: absolute;
+}

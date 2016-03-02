@@ -1,0 +1,192 @@
+<div class="container" ng-init="init()">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="category-header">
+        <h3>Menu Category</h3>
+      </div>
+      <div class="form-add-category">
+        <div class="input-group">
+           <input type="text" class="form-control" placeholder="Add Menu Category" ng-model="_category">
+           <span class="input-group-btn">
+             <button class="btn btn-info" type="button" ng-click="addCategory()" >Add</button>
+           </span>
+         </div><!-- /input-group -->
+      </div>
+
+      <div class="list-group">
+          <a href="#" class="list-group-item"
+          ng-repeat="cat in categories"
+          ng-class="{active: state === cat.id}"
+          ng-click="selectCategory(cat)">
+            {{cat.name}}
+          </a>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="big-preload" ng-show="isLoading">
+        <img src="assets/images/preload.gif" />
+      </div>
+      <div class="menu-wrapper" ng-show="!isLoading">
+        <div class="panel panel-default">
+          <!-- Default panel contents -->
+          <div class="panel-heading">
+            <span class="food-header">{{category.name}}</span>
+            <button type="button" id="btn-del-cat" class="btn btn-warning" ng-click="openEditCatModal()">Edit Category</button>
+          </div>
+          <div class="panel-body">
+            <button type="button" id="btn-add-food" class="btn btn-info" ng-click="openInsertModal()">Add Menu</button>
+          </div>
+          <!-- Table -->
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th class="food-name">Name</th>
+                <th class="food-price">Price</th>
+                <th class="food-desc">Description</th>
+                <th class="food-edit"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="food in foods">
+                <td class="food-name">{{food.name}}</td>
+                <td class="food-price">{{food.price}}</td>
+                <td class="food-desc">{{food.description}}</td>
+                <td class="food-edit"><a ng-click="openEditModal(food)"><i class="fa fa-pencil-square-o"></i></a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div><!--end food wrapper-->
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<script type="text/ng-template" id="insertFoodModal.html" >
+    <div class="modal-header">
+        <h4>Add Menu - <span style="text-decoration:underline;">{{cat.name}}</span><span class="close"  ng-click="cancel()">X</span></h4>
+    </div>
+    <div class="modal-body">
+      <form>
+
+          <div class="row">
+            <div class="form-group col-md-8">
+              <div class="input-group {{nameValidation}}">
+              <span id="addon-name" class="input-group-addon"><i class="fa fa-newspaper-o"></i></span>
+              <input type="text" class="form-control input-block" id="accname" placeholder="Menu Name *"  ng-model="_name" ng-change="onChangeValidate('name')">
+              </div>
+              <span ng-show="accNameErrMsg" for="accName" generated="true" class="help-block">Enter your account name.</span>
+            </div>
+            <div class="form-group col-md-4">
+              <div class="input-group {{emailValidation}}">
+              <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+              <input type="email" class="form-control" id="accemail" placeholder="Price *" ng-model="_email" ng-change="onChangeValidate('email')">
+              </div>
+              <span ng-show="accEmailErrMsg" for="accEmail" generated="true" class="help-block">Enter your email.</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group {{emailValidation}}">
+            <span class="input-group-addon"><i class="fa fa-info-circle"></i></span>
+            <input type="email" class="form-control" id="accemail" placeholder="Description *" ng-model="_email" ng-change="onChangeValidate('email')">
+            </div>
+            <span ng-show="accEmailErrMsg" for="accEmail" generated="true" class="help-block">Enter your email.</span>
+          </div>
+
+      </form>
+    </div>
+    <div class="modal-footer" >
+        <button class="btn btn-info" type="button" ng-click="ok()" ng-show="!onLoad">Save</button>
+    </div>
+</script>
+<!-- end modal -->
+
+<!-- modal -->
+<script type="text/ng-template" id="editFoodModal.html" >
+    <div class="modal-header">
+        <h4>Edit Menu <span class="close"  ng-click="cancel()">X</span></h4>
+    </div>
+    <div class="modal-body">
+      <form>
+
+          <div class="row">
+            <div class="form-group col-md-8">
+              <div class="input-group {{nameValidation}}">
+              <span id="addon-name" class="input-group-addon"><i class="fa fa-newspaper-o"></i></span>
+              <input type="text" class="form-control input-block" id="accname" placeholder="Menu Name *"  ng-model="_name" ng-change="onChangeValidate('name')">
+              </div>
+              <span ng-show="accNameErrMsg" for="accName" generated="true" class="help-block">Enter your account name.</span>
+            </div>
+            <div class="form-group col-md-4">
+              <div class="input-group {{emailValidation}}">
+              <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+              <input type="email" class="form-control" id="accemail" placeholder="Price *" ng-model="_email" ng-change="onChangeValidate('email')">
+              </div>
+              <span ng-show="accEmailErrMsg" for="accEmail" generated="true" class="help-block">Enter your email.</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group {{emailValidation}}">
+            <span class="input-group-addon"><i class="fa fa-info-circle"></i></span>
+            <input type="email" class="form-control" id="accemail" placeholder="Description *" ng-model="_email" ng-change="onChangeValidate('email')">
+            </div>
+            <span ng-show="accEmailErrMsg" for="accEmail" generated="true" class="help-block">Enter your email.</span>
+          </div>
+
+          <div class="food-edit-bottom">
+
+              <label class="radio-inline">
+                <input type="radio" name="inlineRadioOptions" value="option1"> Show in Website
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="inlineRadioOptions" value="option2"> Hide in Website
+              </label>
+
+              <button type="button" id="btn-del-menu" class="btn btn-danger">Delete Menu</button>
+
+          </div>
+
+      </form>
+    </div>
+    <div class="modal-footer" >
+        <button class="btn btn-info" type="button" ng-click="ok()" ng-show="!onLoad">Save</button>
+    </div>
+</script>
+<!-- end modal -->
+
+
+<!-- modal -->
+<script type="text/ng-template" id="editCategoryModal.html" >
+    <div class="modal-header">
+        <h4>Edit Category - {{cat.name}}<span class="close"  ng-click="cancel()">X</span></h4>
+    </div>
+    <div class="modal-body">
+      <form>
+          <div class="form-group">
+            <div class="input-group {{emailValidation}}">
+            <span class="input-group-addon"><i class="fa fa-newspaper-o"></i></span>
+            <input type="text" class="form-control" id="accemail" placeholder="Category Name *" ng-model="_name" ng-change="onChangeValidate('email')">
+            </div>
+            <span ng-show="accEmailErrMsg" for="accEmail" generated="true" class="help-block">Enter your email.</span>
+          </div>
+
+          <div class="food-edit-bottom">
+
+              <label class="radio-inline">
+                <input type="radio" ng-model="_isShown" value="1"> Show in Website
+              </label>
+              <label class="radio-inline">
+                <input type="radio" ng-model="_isShown" value="0"> Hide in Website
+              </label>
+
+          </div>
+
+      </form>
+    </div>
+    <div class="modal-footer" >
+        <button class="btn btn-info" type="button" ng-click="ok()" ng-show="!onLoad">Save</button>
+    </div>
+</script>
+<!-- end modal -->
