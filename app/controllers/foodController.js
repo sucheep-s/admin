@@ -50,7 +50,7 @@ myApp.controller('FoodController', function($scope, $uibModal, FoodService){
 
   $scope.animationsEnabled = true;
 
-  $scope.openInsertModal = function () {
+  $scope.openInsertFoodModal = function () {
     var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
       templateUrl: 'insertFoodModal.html',
@@ -63,9 +63,12 @@ myApp.controller('FoodController', function($scope, $uibModal, FoodService){
         }
       }
     });
+    modalInstance.result.then(function (food) {
+      $scope.foods.push(food);
+    });
   };
 
-  $scope.openEditModal = function () {
+  $scope.openEditFoodModal = function () {
       var modalInstance = $uibModal.open({
         animation: $scope.animationsEnabled,
         templateUrl: 'editFoodModal.html',
@@ -73,7 +76,7 @@ myApp.controller('FoodController', function($scope, $uibModal, FoodService){
         size: 'lg',
         backdrop : 'static',
         resolve: {
-  	      items: function () {
+  	      item: function () {
   	        return food;
   	      }
   	    }

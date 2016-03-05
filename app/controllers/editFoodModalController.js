@@ -1,48 +1,32 @@
 
-myApp.controller('EditFoodModalController', function ($scope, $uibModalInstance, $timeout, items) {
+myApp.controller('EditFoodModalController', function ($scope, $uibModalInstance, $timeout, FoodService, item) {
 
+  $scope.food = item;
   $scope.onLoad = false;
-  $scope._email = '';
-  $scope._name = '';
 
-  $scope.emailValidation = '';
-  $scope.nameValidation = '';
-  $scope.errorMsg = '';
-  $scope.accNameErrMsg = false;
-  $scope.accEmailErrMsg = false;
-
-  $scope.$watch('errorMsg', function(newValue, oldValue){
-    if(newValue !== ''){
-      $timeout(function () {
-        $scope.errorMsg = '';
-      }, 4000);
-    }
-  });
+  $scope._name = item.name;
+  $scope._price = item.price;
+  $scope._description = item.description;
+  $scope._isShown = item.isShown;
 
   $scope.ok = function () {
-    if($scope._name === ''){
-
-        $scope.nameValidation = 'has-error has-feedback';
-        $scope.accNameErrMsg = true;
-
-    }else if(!isValidEmail($scope._email)){
-
-        $scope.emailValidation = 'has-error has-feedback';
-        $scope.accEmailErrMsg = true;
-
-    }else{
-
-        $scope.onLoad =true;
-        var obj = {
-            name : $scope._name,
-            email : $scope._email
-        };
+    if($scope._name !== ''){
+      if( $scope._name !== $scope.cat.name || $scope._isShown !== $scope.cat.isShown ){
+        $scope.cat.name = $scope._name;
+        $scope.cat.isShown = $scope._isShown;
+        updateFood();
+      }
     }
-
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss('cancel');
   };
+
+  function updateFood(){
+    FoodService.editFood($scope.food).success(function(data){
+      $uibModalInstance.close($scope.cat);
+    });
+  }
 
 });

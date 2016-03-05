@@ -21,6 +21,16 @@ myApp.factory('FoodService', function($http){
      });
   };
 
+  factory.addFood = function(food){
+    return $http.post('api/addFood.php', $.param(food),
+     {
+         headers:
+         {
+             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+         }
+     });
+  };
+
   factory.editCategory = function(cat){
     return $http.post('api/editCategory.php', $.param(cat),
      {

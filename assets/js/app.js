@@ -44,6 +44,16 @@ myApp.factory('FoodService', function($http){
      });
   };
 
+  factory.addFood = function(food){
+    return $http.post('api/addFood.php', $.param(food),
+     {
+         headers:
+         {
+             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+         }
+     });
+  };
+
   factory.editCategory = function(cat){
     return $http.post('api/editCategory.php', $.param(cat),
      {
@@ -100,51 +110,35 @@ myApp.controller('EditCategoryModalController', function ($scope, $uibModalInsta
 });
 
 
-myApp.controller('EditFoodModalController', function ($scope, $uibModalInstance, $timeout, items) {
+myApp.controller('EditFoodModalController', function ($scope, $uibModalInstance, $timeout, FoodService, item) {
 
+  $scope.food = item;
   $scope.onLoad = false;
-  $scope._email = '';
-  $scope._name = '';
 
-  $scope.emailValidation = '';
-  $scope.nameValidation = '';
-  $scope.errorMsg = '';
-  $scope.accNameErrMsg = false;
-  $scope.accEmailErrMsg = false;
-
-  $scope.$watch('errorMsg', function(newValue, oldValue){
-    if(newValue !== ''){
-      $timeout(function () {
-        $scope.errorMsg = '';
-      }, 4000);
-    }
-  });
+  $scope._name = item.name;
+  $scope._price = item.price;
+  $scope._description = item.description;
+  $scope._isShown = item.isShown;
 
   $scope.ok = function () {
-    if($scope._name === ''){
-
-        $scope.nameValidation = 'has-error has-feedback';
-        $scope.accNameErrMsg = true;
-
-    }else if(!isValidEmail($scope._email)){
-
-        $scope.emailValidation = 'has-error has-feedback';
-        $scope.accEmailErrMsg = true;
-
-    }else{
-
-        $scope.onLoad =true;
-        var obj = {
-            name : $scope._name,
-            email : $scope._email
-        };
+    if($scope._name !== ''){
+      if( $scope._name !== $scope.cat.name || $scope._isShown !== $scope.cat.isShown ){
+        $scope.cat.name = $scope._name;
+        $scope.cat.isShown = $scope._isShown;
+        updateFood();
+      }
     }
-
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss('cancel');
   };
+
+  function updateFood(){
+    FoodService.editFood($scope.food).success(function(data){
+      $uibModalInstance.close($scope.cat);
+    });
+  }
 
 });
 
@@ -200,7 +194,7 @@ myApp.controller('FoodController', function($scope, $uibModal, FoodService){
 
   $scope.animationsEnabled = true;
 
-  $scope.openInsertModal = function () {
+  $scope.openInsertFoodModal = function () {
     var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
       templateUrl: 'insertFoodModal.html',
@@ -213,9 +207,12 @@ myApp.controller('FoodController', function($scope, $uibModal, FoodService){
         }
       }
     });
+    modalInstance.result.then(function (food) {
+      $scope.foods.push(food);
+    });
   };
 
-  $scope.openEditModal = function () {
+  $scope.openEditFoodModal = function () {
       var modalInstance = $uibModal.open({
         animation: $scope.animationsEnabled,
         templateUrl: 'editFoodModal.html',
@@ -223,7 +220,7 @@ myApp.controller('FoodController', function($scope, $uibModal, FoodService){
         size: 'lg',
         backdrop : 'static',
         resolve: {
-  	      items: function () {
+  	      item: function () {
   	        return food;
   	      }
   	    }
@@ -278,14 +275,32 @@ myApp.controller('FoodController', function($scope, $uibModal, FoodService){
 });
 
 
-myApp.controller('InsertFoodModalController', function ($scope, $uibModalInstance, item) {
+myApp.controller('InsertFoodModalController', function ($scope, $uibModalInstance, item, FoodService) {
 
   $scope.onLoad = false;
   $scope.cat = item;
+  $scope.food = {
+    catId : item.id
+  };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss('cancel');
   };
+
+  $scope.ok = function(){
+    addFood();
+  };
+
+  function addFood(){
+
+    FoodService.addFood($scope.food).success(function(data){
+      if(!data.error){
+        $uibModalInstance.close(data);
+      }
+
+    });
+
+  }
 
 });
 
@@ -294,7 +309,7 @@ angular.module('myApp.templates', []).run(['$templateCache', function($templateC
   $templateCache.put("views/category.html",
     "");
   $templateCache.put("views/food.html",
-    "<div class=container ng-init=init()><div class=row><div class=col-md-3><div class=category-header><h3>Menu Category</h3></div><div class=form-add-category><div class=input-group><input class=form-control placeholder=\"Add Menu Category\" ng-model=_category> <span class=input-group-btn><button class=\"btn btn-info\" type=button ng-click=addCategory()>Add</button></span></div></div><div class=list-group><a href=# class=list-group-item ng-repeat=\"cat in categories\" ng-class=\"{active: state === cat.id}\" ng-click=selectCategory(cat)>{{cat.name}}</a></div></div><div class=col-md-9><div class=big-preload ng-show=isLoading><img src=\"assets/images/preload.gif\"></div><div class=menu-wrapper ng-show=!isLoading><div class=\"panel panel-default\"><div class=panel-heading><span class=food-header>{{category.name}}</span> <button type=button id=btn-del-cat class=\"btn btn-warning\" ng-click=openEditCatModal()>Edit Category</button></div><div class=panel-body><button type=button id=btn-add-food class=\"btn btn-info\" ng-click=openInsertModal()>Add Menu</button></div><table class=\"table table-hover\"><thead><tr><th class=food-name>Name</th><th class=food-price>Price</th><th class=food-desc>Description</th><th class=food-edit></th></tr></thead><tbody><tr ng-repeat=\"food in foods\"><td class=food-name>{{food.name}}</td><td class=food-price>{{food.price}}</td><td class=food-desc>{{food.description}}</td><td class=food-edit><a ng-click=openEditModal(food)><i class=\"fa fa-pencil-square-o\"></i></a></td></tr></tbody></table></div></div></div></div></div><script type=text/ng-template id=insertFoodModal.html><div class=\"modal-header\">\n" +
+    "<div class=container ng-init=init()><div class=row><div class=col-md-3><div class=category-header><h3>Menu Category</h3></div><div class=form-add-category><div class=input-group><input class=form-control placeholder=\"Add Menu Category\" ng-model=_category> <span class=input-group-btn><button class=\"btn btn-info\" type=button ng-click=addCategory()>Add</button></span></div></div><div class=list-group><a href=# class=list-group-item ng-repeat=\"cat in categories\" ng-class=\"{active: state === cat.id}\" ng-click=selectCategory(cat)>{{cat.name}}</a></div></div><div class=col-md-9><div class=big-preload ng-show=isLoading><img src=\"assets/images/preload.gif\"></div><div class=menu-wrapper ng-show=!isLoading><div class=\"panel panel-default\"><div class=panel-heading><span class=food-header>{{category.name}}</span> <button type=button id=btn-del-cat class=\"btn btn-warning\" ng-click=openEditCatModal()>Edit Category</button></div><div class=panel-body><button type=button id=btn-add-food class=\"btn btn-info\" ng-click=openInsertFoodModal()>Add Menu</button></div><table class=\"table table-hover\"><thead><tr><th class=food-name>Name</th><th class=food-price>Price</th><th class=food-desc>Description</th><th class=food-edit></th></tr></thead><tbody><tr ng-repeat=\"food in foods\"><td class=food-name>{{food.name}}</td><td class=food-price>{{food.price}}</td><td class=food-desc>{{food.description}}</td><td class=food-edit><a ng-click=openEditFoodModal(food)><i class=\"fa fa-pencil-square-o\"></i></a></td></tr></tbody></table></div></div></div></div></div><script type=text/ng-template id=insertFoodModal.html><div class=\"modal-header\">\n" +
     "        <h4>Add Menu - <span style=\"text-decoration:underline;\">{{cat.name}}</span><span class=\"close\"  ng-click=\"cancel()\">X</span></h4>\n" +
     "    </div>\n" +
     "    <div class=\"modal-body\">\n" +
@@ -304,14 +319,14 @@ angular.module('myApp.templates', []).run(['$templateCache', function($templateC
     "            <div class=\"form-group col-md-8\">\n" +
     "              <div class=\"input-group {{nameValidation}}\">\n" +
     "              <span id=\"addon-name\" class=\"input-group-addon\"><i class=\"fa fa-newspaper-o\"></i></span>\n" +
-    "              <input type=\"text\" class=\"form-control input-block\" id=\"accname\" placeholder=\"Menu Name *\"  ng-model=\"_name\" ng-change=\"onChangeValidate('name')\">\n" +
+    "              <input type=\"text\" class=\"form-control input-block\" id=\"accname\" placeholder=\"Menu Name *\"  ng-model=\"food.name\">\n" +
     "              </div>\n" +
     "              <span ng-show=\"accNameErrMsg\" for=\"accName\" generated=\"true\" class=\"help-block\">Enter your account name.</span>\n" +
     "            </div>\n" +
     "            <div class=\"form-group col-md-4\">\n" +
     "              <div class=\"input-group {{emailValidation}}\">\n" +
     "              <span class=\"input-group-addon\"><i class=\"fa fa-dollar\"></i></span>\n" +
-    "              <input type=\"email\" class=\"form-control\" id=\"accemail\" placeholder=\"Price *\" ng-model=\"_email\" ng-change=\"onChangeValidate('email')\">\n" +
+    "              <input type=\"text\" class=\"form-control\" placeholder=\"Price *\" ng-model=\"food.price\" >\n" +
     "              </div>\n" +
     "              <span ng-show=\"accEmailErrMsg\" for=\"accEmail\" generated=\"true\" class=\"help-block\">Enter your email.</span>\n" +
     "            </div>\n" +
@@ -320,7 +335,7 @@ angular.module('myApp.templates', []).run(['$templateCache', function($templateC
     "          <div class=\"form-group\">\n" +
     "            <div class=\"input-group {{emailValidation}}\">\n" +
     "            <span class=\"input-group-addon\"><i class=\"fa fa-info-circle\"></i></span>\n" +
-    "            <input type=\"email\" class=\"form-control\" id=\"accemail\" placeholder=\"Description *\" ng-model=\"_email\" ng-change=\"onChangeValidate('email')\">\n" +
+    "            <input type=\"text\" class=\"form-control\" placeholder=\"Description *\" ng-model=\"food.description\" ng-change=\"onChangeValidate('email')\">\n" +
     "            </div>\n" +
     "            <span ng-show=\"accEmailErrMsg\" for=\"accEmail\" generated=\"true\" class=\"help-block\">Enter your email.</span>\n" +
     "          </div>\n" +
@@ -328,7 +343,7 @@ angular.module('myApp.templates', []).run(['$templateCache', function($templateC
     "      </form>\n" +
     "    </div>\n" +
     "    <div class=\"modal-footer\" >\n" +
-    "        <button class=\"btn btn-info\" type=\"button\" ng-click=\"ok()\" ng-show=\"!onLoad\">Save</button>\n" +
+    "        <button class=\"btn btn-info\" type=\"button\" ng-click=\"ok()\" >Save</button>\n" +
     "    </div></script><script type=text/ng-template id=editFoodModal.html><div class=\"modal-header\">\n" +
     "        <h4>Edit Menu <span class=\"close\"  ng-click=\"cancel()\">X</span></h4>\n" +
     "    </div>\n" +
