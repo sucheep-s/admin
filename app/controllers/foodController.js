@@ -5,6 +5,7 @@ myApp.controller('FoodController', function($scope, $uibModal, FoodService){
   $scope.state = '';
   $scope.categories = [];
   $scope.foods = [];
+  $scope.food = {};
   $scope.category = {};
   $scope._category = '';
 
@@ -68,22 +69,30 @@ myApp.controller('FoodController', function($scope, $uibModal, FoodService){
     });
   };
 
-  $scope.openEditFoodModal = function () {
-      var modalInstance = $uibModal.open({
-        animation: $scope.animationsEnabled,
-        templateUrl: 'editFoodModal.html',
-        controller: 'EditFoodModalController',
-        size: 'lg',
-        backdrop : 'static',
-        resolve: {
-  	      item: function () {
-  	        return food;
-  	      }
-  	    }
-      });
-    modalInstance.result.then(function (food) {
-      $scope.accounts.push(food);
+  $scope.openEditFoodModal = function (food) {
+    $scope.food = food;
+    var modalInstance = $uibModal.open({
+      animation: $scope.animationsEnabled,
+      templateUrl: 'editFoodModal.html',
+      controller: 'EditFoodModalController',
+      size: 'lg',
+      backdrop : 'static',
+      resolve: {
+	      item: function () {
+	        return food;
+	      }
+	    }
     });
+    modalInstance.result.then(function (data) {
+      var index = $scope.foods.indexOf(food);
+
+      if(data.state === 'update'){
+        $scope.foods[index] = data.data;
+      }else{
+        $scope.foods.splice(index, 1);
+      }
+    });
+
   };
 
   $scope.openEditCatModal = function () {
@@ -103,24 +112,6 @@ myApp.controller('FoodController', function($scope, $uibModal, FoodService){
     modalInstance.result.then(function (cat) {
       var index = $scope.categories.indexOf(cat);
       $scope.categories[index] = cat;
-    });
-  };
-
-  $scope.openDeleteModal = function () {
-      var modalInstance = $uibModal.open({
-        animation: $scope.animationsEnabled,
-        templateUrl: 'confirmDeleteModal.html',
-        controller: 'DeleteCategoryModalController',
-        size: 'sm',
-        backdrop : 'static',
-        resolve: {
-  	      item: function () {
-  	        return $scope.category;
-  	      }
-  	    }
-      });
-    modalInstance.result.then(function (food) {
-      $scope.accounts.push(food);
     });
   };
 

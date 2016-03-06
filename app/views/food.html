@@ -51,7 +51,7 @@
                 <td class="food-name">{{food.name}}</td>
                 <td class="food-price">{{food.price}}</td>
                 <td class="food-desc">{{food.description}}</td>
-                <td class="food-edit"><a ng-click="openEditFoodModal(food)"><i class="fa fa-pencil-square-o"></i></a></td>
+                <td class="food-edit"><a ng-click="openEditFoodModal(food);"><i class="fa fa-pencil-square-o"></i></a></td>
               </tr>
             </tbody>
           </table>
@@ -80,7 +80,7 @@
             <div class="form-group col-md-4">
               <div class="input-group {{emailValidation}}">
               <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
-              <input type="text" class="form-control" placeholder="Price *" ng-model="food.price" >
+              <input type="text" class="form-control" placeholder="Price *" ng-model="food.price" valid-number>
               </div>
               <span ng-show="accEmailErrMsg" for="accEmail" generated="true" class="help-block">Enter your email.</span>
             </div>
@@ -114,14 +114,14 @@
             <div class="form-group col-md-8">
               <div class="input-group {{nameValidation}}">
               <span id="addon-name" class="input-group-addon"><i class="fa fa-newspaper-o"></i></span>
-              <input type="text" class="form-control input-block" id="accname" placeholder="Menu Name *"  ng-model="_name" ng-change="onChangeValidate('name')">
+              <input type="text" class="form-control input-block" id="accname" placeholder="Menu Name *"  ng-model="_name" >
               </div>
               <span ng-show="accNameErrMsg" for="accName" generated="true" class="help-block">Enter your account name.</span>
             </div>
             <div class="form-group col-md-4">
               <div class="input-group {{emailValidation}}">
               <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
-              <input type="email" class="form-control" id="accemail" placeholder="Price *" ng-model="_email" ng-change="onChangeValidate('email')">
+              <input type="text" class="form-control" id="accemail" placeholder="Price *" ng-model="_price" valid-number>
               </div>
               <span ng-show="accEmailErrMsg" for="accEmail" generated="true" class="help-block">Enter your email.</span>
             </div>
@@ -130,22 +130,25 @@
           <div class="form-group">
             <div class="input-group {{emailValidation}}">
             <span class="input-group-addon"><i class="fa fa-info-circle"></i></span>
-            <input type="email" class="form-control" id="accemail" placeholder="Description *" ng-model="_email" ng-change="onChangeValidate('email')">
+            <input type="text" class="form-control" id="accemail" placeholder="Description *" ng-model="_description" >
             </div>
             <span ng-show="accEmailErrMsg" for="accEmail" generated="true" class="help-block">Enter your email.</span>
           </div>
 
           <div class="food-edit-bottom">
 
-              <label class="radio-inline">
-                <input type="radio" name="inlineRadioOptions" value="option1"> Show in Website
-              </label>
-              <label class="radio-inline">
-                <input type="radio" name="inlineRadioOptions" value="option2"> Hide in Website
-              </label>
+          <label class="radio-inline">
+            <input type="radio" ng-model="_isShown" value="1"> Show in Website
+          </label>
+          <label class="radio-inline">
+            <input type="radio" ng-model="_isShown" value="0"> Hide in Website
+          </label>
 
-              <button type="button" id="btn-del-menu" class="btn btn-danger">Delete Menu</button>
-
+              <button ng-show="!deleteState" ng-click="deleteState=true;" type="button" id="btn-del-menu" class="btn btn-danger">Delete Menu</button>
+              <spa  ng-show="deleteState" class="delete-food">
+                <a ng-click="deleteState=false;">Cancel Delete</a>&nbsp;
+                <a ng-click="delete()">Confirm Delete</a>
+              </span>
           </div>
 
       </form>

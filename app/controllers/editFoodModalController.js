@@ -1,21 +1,17 @@
-
+/*jshint esversion: 6 */
 myApp.controller('EditFoodModalController', function ($scope, $uibModalInstance, $timeout, FoodService, item) {
 
-  $scope.food = item;
-  $scope.onLoad = false;
-
+  $scope.deleteState = false;
+  var food = {};
   $scope._name = item.name;
   $scope._price = item.price;
   $scope._description = item.description;
   $scope._isShown = item.isShown;
+  $scope.onLoad = false;
 
   $scope.ok = function () {
-    if($scope._name !== ''){
-      if( $scope._name !== $scope.cat.name || $scope._isShown !== $scope.cat.isShown ){
-        $scope.cat.name = $scope._name;
-        $scope.cat.isShown = $scope._isShown;
-        updateFood();
-      }
+    if($scope._name !== '' || $scope._price !== ''){
+      updateFood();
     }
   };
 
@@ -23,9 +19,46 @@ myApp.controller('EditFoodModalController', function ($scope, $uibModalInstance,
     $uibModalInstance.dismiss('cancel');
   };
 
+  $scope.delete = function(){
+    deleteFood();
+  };
+
   function updateFood(){
-    FoodService.editFood($scope.food).success(function(data){
-      $uibModalInstance.close($scope.cat);
+    food = {
+      state : 'update',
+      data : {
+        id : item.id,
+        name : $scope._name,
+        description : $scope._description,
+        price : $scope._price,
+        isShown : $scope._isShown
+      }
+    };
+    FoodService.editFood(food.data).success(function(data){
+      if(!data.error){
+        $uibModalInstance.close(food);
+      }
+    });
+  }
+
+  function deleteFood(){
+    var delFood = {
+      id : item.id
+    };
+    food = {
+      state : 'delete',
+      data : {
+        id : item.id,
+        name : $scope._name,
+        description : $scope._description,
+        price : $scope._price,
+        isShown : $scope._isShown
+      }
+    };
+    FoodService.deleteFood(delFood).success(function(data){
+      if(!data.error){
+        $uibModalInstance.close(food);
+      }
     });
   }
 

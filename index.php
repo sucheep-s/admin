@@ -11,11 +11,11 @@
   </head>
   <body>
     <div id="wrapper">
-      <nav class="navbar navbar-inverse">
+      <nav class="navbar navbar-inverse" ng-init="navCollapsed = true">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+              <button type="button" class="navbar-toggle collapsed" ng-click="navCollapsed = !navCollapsed" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -27,14 +27,17 @@
               <div class="brand-text">Content Management System</div>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="collapse navbar-collapse" uib-collapse="navCollapsed">
               <ul class="nav navbar-nav navbar-right" >
-    	            <li class="dropdown" uib-dropdown>
+    	            <li ng-show="navCollapsed" class="dropdown" uib-dropdown>
     	                <a href="#" class="dropdown-toggle" uib-dropdown-toggle><i class="fa fa-cog fa-lg"></i></a>
     	                <ul class="dropdown-menu" uib-dropdown-menu role="menu">
     	                    <li class="m_2"><a href="#" ng-click="logout()"><i class="fa fa-lock"></i> Logout</a></li>
     	                </ul>
     	            </li>
+                  <li ng-show="!navCollapsed">
+                    <a href="#" ng-click="logout()"><i class="fa fa-lock"></i> Logout</a>
+                  </li>
     	        </ul>
             </div><!-- /.navbar-collapse -->
           </div><!-- /.container-fluid -->

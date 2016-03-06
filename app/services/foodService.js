@@ -41,5 +41,25 @@ myApp.factory('FoodService', function($http){
      });
   };
 
+  factory.editFood = function(food){
+    return $http.post('api/editFood.php', $.param(food),
+     {
+         headers:
+         {
+             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+         }
+     });
+  };
+
+  factory.deleteFood = function(food){
+    return $http.post('api/deleteFood.php', $.param(food),
+     {
+         headers:
+         {
+             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+         }
+     });
+  };
+
   return factory;
 });

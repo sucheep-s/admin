@@ -12,7 +12,9 @@ myApp.controller('InsertFoodModalController', function ($scope, $uibModalInstanc
   };
 
   $scope.ok = function(){
-    addFood();
+    if($scope.food.name !== '' || $scope.food.price !== ''){
+      addFood();
+    }
   };
 
   function addFood(){

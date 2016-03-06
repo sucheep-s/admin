@@ -84,3 +84,9 @@ tbody > tr > td{
   left: 50%;
   position: absolute;
 }
+.delete-food{
+  margin-left: 10px;
+}
+.delete-food a{
+  cursor: pointer;
+}
